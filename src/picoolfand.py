@@ -58,7 +58,7 @@ def daemonize():
 		#sys.stdout = '/dev/null'
 		#sys.stderr = '/dev/null'
 	except OSError as err:
-		sys.stderr.write(str(err))
+		sys.stderr.write(str(err) + "\n")
 		sys.exit(1)
 
 def handler(signum, frame):
