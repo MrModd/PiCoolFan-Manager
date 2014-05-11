@@ -1,0 +1,10 @@
+[Unit]
+Description=Initializer for PiCoolFan shield
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/opt/picoolfan-manager/picoolfan-init.sh
+
+[Install]
+WantedBy=multi-user.target

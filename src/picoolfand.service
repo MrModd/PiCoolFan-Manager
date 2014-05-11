@@ -1,0 +1,12 @@
+[Unit]
+Description=Temperature control for PiCoolFan system
+Requires=picoolfan-init.service
+After=picoolfan-init.service
+
+[Service]
+Type=forking
+ExecStart=/opt/picoolfan-manager/picoolfand.py -d
+Restart=on-abort
+
+[Install]
+WantedBy=multi-user.target
