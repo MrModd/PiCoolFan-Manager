@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ##########################################################################
-# PiCoolFan Manager v1.0 by MrModd
+# PiCoolFan Manager by MrModd
 # Copyright (C) 2014  Federico "MrModd" Cosentino (http://mrmodd.it/)
 # 
 # This program is free software: you can redistribute it and/or modify
@@ -18,10 +18,10 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ##########################################################################
 
-#if [ "$(id -u)" != "0" ] ; then
-#	echo "You must be root to execute this script" 1>&2
-#	exit 1
-#fi
+if [ "$(id -u)" != "0" ] ; then
+	echo "You must be root to execute this script" 1>&2
+	exit 1
+fi
 
 modprobe i2c-bcm2708
 modprobe i2c-dev

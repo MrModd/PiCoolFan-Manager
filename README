@@ -1,6 +1,6 @@
-PiCoolFan Manager v1.0 by MrModd
+PiCoolFan Manager by MrModd
 Copyright (C) 2014  Federico "MrModd" Cosentino (http://mrmodd.it/)
-Version 1.0 2014.05.11
+Version 1.1 2014.05.14
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -31,9 +31,20 @@ ntp synchronization cannot be done.
 
 --Prerequisites
 
+This script is intended for OSes that adopt systemd.
+
 Before using this you must install i2c tools, because it requires
 "i2cset" command to operate. On ArchLinux you can install them with:
 	~# pacman -S i2c-tools
 
 Python 3 is also required. On ArchLinux install it with:
 	~# pacman -S python
+
+--How to install
+
+Clone this git repository and execute install.sh script with root permissions.
+If you want to start the script on boot enable it with systemctl as described
+during installation process.
+Default configuration should be good for most people, anyway you can configure
+temperature thresholds and interval of updates.
+Check "/opt/picoolfan-manager/picoolfand.py".
