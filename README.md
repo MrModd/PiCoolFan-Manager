@@ -3,7 +3,7 @@
 ## License
 
 Copyright (C) 2014  Federico "MrModd" Cosentino (http://mrmodd.it/)
-Version 1.1 2014.05.14
+Version 1.2 2014.06.25
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -36,16 +36,21 @@ ntp synchronization cannot be done.
 
 This script is intended for OSes that adopt systemd.
 
-Before using this you must install i2c tools, because it requires
+* Before using this you must install i2c tools, because it requires
 "i2cset" command to operate. On ArchLinux you can install them with:
-	~# pacman -S i2c-tools
 
-Python 3 is also required. On ArchLinux install it with:
-	~# pacman -S python
+		~# pacman -S i2c-tools
+
+* Python 3 is also required. On ArchLinux install it with:
+
+		~# pacman -S python
 
 ## How to install
 
-Clone this git repository and execute install.sh script with root permissions.
+Clone this git repository and execute install.sh script with root permissions:
+
+		~# ./install.sh install
+
 If you want to start the script on boot enable it with systemctl as described
 during installation process.
 Default configuration should be good for most people, anyway you can configure
