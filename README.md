@@ -1,4 +1,7 @@
-PiCoolFan Manager by MrModd
+# PiCoolFan Manager by MrModd
+
+## License
+
 Copyright (C) 2014  Federico "MrModd" Cosentino (http://mrmodd.it/)
 Version 1.1 2014.05.14
 
@@ -15,7 +18,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-//--------------------------------------------------------------------//
+## Brief description
 
 PiCoolFan Manager is a daemon studied for the PiCoolFan shield of
 RaspberryPi. It monitors internal CPU temperature and set fan speed
@@ -29,7 +32,7 @@ system clock. In this way one can check hardware clock with "hwclock"
 command. This can be useful if there's no internet connection and
 ntp synchronization cannot be done.
 
---Prerequisites
+## Prerequisites
 
 This script is intended for OSes that adopt systemd.
 
@@ -40,7 +43,7 @@ Before using this you must install i2c tools, because it requires
 Python 3 is also required. On ArchLinux install it with:
 	~# pacman -S python
 
---How to install
+## How to install
 
 Clone this git repository and execute install.sh script with root permissions.
 If you want to start the script on boot enable it with systemctl as described
@@ -48,3 +51,8 @@ during installation process.
 Default configuration should be good for most people, anyway you can configure
 temperature thresholds and interval of updates.
 Check "/opt/picoolfan-manager/picoolfand.py".
+
+### Optional
+
+Uncomment last line of /opt/picoolfan-manager/picoolfan-init.sh if you want to
+set the system time at boot with the time kept by the RTC of PiCoolFan.
