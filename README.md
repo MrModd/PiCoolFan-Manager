@@ -3,7 +3,7 @@
 ## License
 
 Copyright (C) 2014  Federico "MrModd" Cosentino (http://mrmodd.it/)
-Version 1.2 2014.06.25
+Version 1.2
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/python
 
 ##########################################################################
 # PiCoolFan Manager by MrModd
@@ -18,28 +18,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ##########################################################################
 
-if [ "$(id -u)" != "0" ] ; then
-	echo "You must be root to execute this script" 1>&2
-	exit 1
-fi
+from systemd import journal
 
-modprobe i2c-bcm2708
-modprobe i2c-dev
-modprobe rtc-ds1307
-
-echo "ds1307 0x68" > /sys/class/i2c-adapter/i2c-1/new_device
-
-i2cset -y 1 0x6c 0 1
-i2cset -y 1 0x6c 1 3
-
-# Next line set the system clock based on the RTC of PiCoolFan
-# You should uncomment it just if your Raspberry is not
-# connected in internet.
-# (Reason: by default on Raspberry, netctl try to fetch NTP
-# time when it sets up the network interface. But then this
-# script overwrite the time retrieved with that kept by
-# PiCoolFan, wich is much less accurate)
-
-#hwclock -s
-
-exit 0
+def log(message):
+	journal.send(message)

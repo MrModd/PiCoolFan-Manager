@@ -21,7 +21,8 @@
 import subprocess #For Popen
 import time #For sleep
 import os, sys, getopt, signal
-from systemd import journal
+
+import pilog
 
 ################### CONFIGURE NEXT LINES #################################
 
@@ -92,7 +93,7 @@ except getopt.GetoptError as err:
 	sys.exit(1)
 for opt, arg in opts:
 	if opt in ('-d', '--daemon'):
-		journal.send("Detaching.\n")
+		pilog.log("Detaching.\n")
 		daemonize()
 		daemon=True
 
@@ -107,7 +108,7 @@ getResult(["i2cset", "-y", bus, device, address, speeds[0], "b"])
 if (daemon==False):
 	print("Fan initialized (initial speed set to OFF).")
 else:
-	journal.send("Fan initialized (initial speed set to OFF).")
+	pilog.log("Fan initialized (initial speed set to OFF).")
 
 while 1:
 	time.sleep(delay)
@@ -123,7 +124,7 @@ while 1:
 					if (daemon==False):
 						print("Temperature %3.2f°C, new speed %s." % (newTemp, speedLabel[i]))
 					else:
-						journal.send("Temperature %3.2f°C, new speed %s." % (newTemp, speedLabel[i]))
+						pilog.log("Temperature %3.2f°C, new speed %s." % (newTemp, speedLabel[i]))
 
 				break
 			elif (i == 4):
@@ -134,5 +135,5 @@ while 1:
 					if (daemon==False):
 						print("Temperature %3.2f°C, new speed %s." % (newTemp, speedLabel[i]))
 					else:
-						journal.send("Temperature %3.2f°C, new speed %s." % (newTemp, speedLabel[i]))
+						pilog.log("Temperature %3.2f°C, new speed %s." % (newTemp, speedLabel[i]))
 			i = i+1

@@ -48,6 +48,7 @@ install() {
 		fi
 		mkdir -p /opt/picoolfan-manager
 		cp ./src/picoolfand.py /opt/picoolfan-manager/
+		cp ./src/pilog.py /opt/picoolfan-manager/
 		cp ./src/picoolfan-init.sh /opt/picoolfan-manager/
 		cp ./src/picoolfand.service /usr/lib/systemd/system/
 		cp ./src/picoolfan-init.service /usr/lib/systemd/system/
@@ -79,8 +80,10 @@ uninstall() {
 		systemctl stop picoolfan-init.service
 		systemctl disable picoolfand.service
 		systemctl disable picoolfan-init.service
-		rm -f /opt/picoolfan-manager/picoolfand.py
+		rm -f /opt/picoolfan-manager/picoolfand.py*
+		rm -f /opt/picoolfan-manager/pilog.py*
 		rm -f /opt/picoolfan-manager/picoolfan-init.sh
+		rm -rf /opt/picoolfan-manager/__pycache__/
 		rmdir /opt/picoolfan-manager/ 2> /dev/null
 		rm -f /usr/lib/systemd/system/picoolfand.service
 		rm -f /usr/lib/systemd/system/picoolfan-init.service
