@@ -54,6 +54,7 @@ install() {
 				systemctl stop picoolfan-init.service
 				systemctl disable picoolfand.service
 				systemctl disable picoolfan-init.service
+				rm -f /usr/bin/picoolfan
 			else
 				echo "Installation interrupted by user."
 				exit 1
@@ -63,11 +64,14 @@ install() {
 		cp ./src/picoolfand.py /opt/picoolfan-manager/
 		cp ./src/pilog.py /opt/picoolfan-manager/
 		cp ./src/piconfig.py /opt/picoolfan-manager/
+		cp ./src/picoolfan-manager.py /opt/picoolfan-manager/
 		cp ./src/picoolfan-init.sh /opt/picoolfan-manager/
 		cp ./src/picoolfand.service /usr/lib/systemd/system/
 		cp ./src/picoolfan-init.service /usr/lib/systemd/system/
 		chmod +x /opt/picoolfan-manager/picoolfand.py
+		chmod +x /opt/picoolfan-manager/picoolfan-manager.py
 		chmod +x /opt/picoolfan-manager/picoolfan-init.sh
+		ln -s /opt/picoolfan-manager/picoolfan-manager.py /usr/bin/picoolfan
 		systemctl daemon-reload
 		echo "----------------------------------------------------------"
 		echo " start daemon with   'systemctl start picoolfand.service' "
@@ -94,9 +98,11 @@ uninstall() {
 		systemctl stop picoolfan-init.service
 		systemctl disable picoolfand.service
 		systemctl disable picoolfan-init.service
+		rm -f /usr/bin/picoolfan
 		rm -f /opt/picoolfan-manager/picoolfand.py*
 		rm -f /opt/picoolfan-manager/pilog.py*
 		rm -f /opt/picoolfan-manager/piconfig.py*
+		rm -f /opt/picoolfan-manager/picoolfan-manager.py*
 		rm -f /opt/picoolfan-manager/picoolfan-init.sh
 		rm -rf /opt/picoolfan-manager/__pycache__/
 		rmdir /opt/picoolfan-manager/ 2> /dev/null

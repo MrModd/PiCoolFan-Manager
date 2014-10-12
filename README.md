@@ -36,12 +36,13 @@ ntp synchronization cannot be done.
 
 This script is intended for OSes that adopt systemd.
 
-* Before using this you must install i2c tools, because it requires
-"i2cset" command to operate. On ArchLinux you can install them with:
+- Before using this program you must install **i2c tools**, because
+it requires *i2cset* command to operate. On ArchLinux you can install
+them with:
 
 		~# pacman -S i2c-tools
 
-* Python 3 is also required. On ArchLinux install it with:
+- **Python** is also required. On ArchLinux install it with:
 
 		~# pacman -S python
 
@@ -51,13 +52,20 @@ Clone this git repository and execute install.sh script with root permissions:
 
 		~# ./install.sh install
 
-If you want to start the script on boot enable it with systemctl as described
+If you want to start the script on boot, enable it with systemctl as described
 during installation process.
 Default configuration should be good for most people, anyway you can configure
-temperature thresholds and interval of updates.
-Check "/opt/picoolfan-manager/picoolfand.py".
+temperature thresholds and the interval between updates.
+You can find configuration file under */etc/default/picoolfan-manager*.
 
 ### Optional
 
-Uncomment last line of /opt/picoolfan-manager/picoolfan-init.sh if you want to
-set the system time at boot with the time kept by the RTC of PiCoolFan.
+Raspberry doesn't have an embedded Real Time Clock. That means it loses the
+current time as soon as is unplugged from the main power.
+Most distributions that run on Raspberry synchronize the time with NTP protocol
+every time the board is powered up. This, however, requires an Internet connection
+during the boot up. If you want to set the system time with the one kept by
+PiCoolFan uncomment last line of */opt/picoolfan-manager/picoolfan-init.sh*.
+This can go in conflict with NTP server, so make sure you use only one method
+(for example disable ntpd daemon during boot process or keep the Raspberry
+disconnected from the Internet).
