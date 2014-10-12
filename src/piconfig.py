@@ -48,7 +48,7 @@ class ConfigException(Exception):
 	def __init__(self, value):
 		self.value = value
 	def __str__(self):
-		return repr(self.value)
+		return str(self.value)
 
 def getConfig(configPath):
 	dirty = False
@@ -74,6 +74,8 @@ def getConfig(configPath):
 		configHash['thresholds'] = thresholds
 		Config['Global']['thresholds'] = json.dumps(thresholds)
 		dirty = True
+	except ConfigParser.InterpolationError as e:
+		raise ConfigException('Error in config file. Message was:\n    ' + str(e))
 	
 	try:
 		configHash['delay'] = int(Config.get('Global', 'delay'))
@@ -83,6 +85,8 @@ def getConfig(configPath):
 		dirty = True
 	except ValueError:
 		raise ConfigException('Invalid value for "delay" option')
+	except ConfigParser.InterpolationError as e:
+		raise ConfigException('Error in config file. Message was:\n    ' + str(e))
 	
 	# Advanced
 	if not 'Advanced' in Config:
@@ -102,6 +106,8 @@ def getConfig(configPath):
 		configHash['bus'] = bus
 		Config['Advanced']['bus'] = bus
 		dirty = True
+	except ConfigParser.InterpolationError as e:
+		raise ConfigException('Error in config file. Message was:\n    ' + str(e))
 	
 	try:
 		configHash['device'] = Config.get('Advanced', 'device')
@@ -109,6 +115,8 @@ def getConfig(configPath):
 		configHash['device'] = device
 		Config['Advanced']['device'] = device
 		dirty = True
+	except ConfigParser.InterpolationError as e:
+		raise ConfigException('Error in config file. Message was:\n    ' + str(e))
 
 	try:
 		configHash['address'] = Config.get('Advanced', 'address')
@@ -116,6 +124,8 @@ def getConfig(configPath):
 		configHash['address'] = address
 		Config['Advanced']['address'] = address
 		dirty = True
+	except ConfigParser.InterpolationError as e:
+		raise ConfigException('Error in config file. Message was:\n    ' + str(e))
 
 	try:
 		configHash['speeds'] = json.loads(Config.get('Advanced', 'speeds'))
@@ -123,6 +133,8 @@ def getConfig(configPath):
 		configHash['speeds'] = speeds
 		Config['Advanced']['speeds'] = json.dumps(speeds)
 		dirty = True
+	except ConfigParser.InterpolationError as e:
+		raise ConfigException('Error in config file. Message was:\n    ' + str(e))
 	
 	try:
 		configHash['speedLabels'] = json.loads(Config.get('Advanced', 'speedLabels'))
@@ -130,6 +142,8 @@ def getConfig(configPath):
 		configHash['speedLabels'] = speedLabels
 		Config['Advanced']['speedLabels'] = json.dumps(speedLabels)
 		dirty = True
+	except ConfigParser.InterpolationError as e:
+		raise ConfigException('Error in config file. Message was:\n    ' + str(e))
 
 	try:
 		configHash['margin'] = int(Config.get('Advanced', 'margin'))
@@ -139,6 +153,8 @@ def getConfig(configPath):
 		dirty = True
 	except ValueError:
 		raise ConfigException('Invalid value for "margin" option')
+	except ConfigParser.InterpolationError as e:
+		raise ConfigException('Error in config file. Message was:\n    ' + str(e))
 	
 	if dirty:
 		with open(configPath, 'w+') as configfile:
