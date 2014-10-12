@@ -25,11 +25,24 @@ is_root() {
 	fi
 }
 
-install() {
-	if [ ! -d /usr/lib/systemd/system/ ] ; then
-		echo "This system doesn't seem to have systemd. Aborting." 1>&2
+check_prerequisites() {
+	echo -n "Checking prerequisites... "
+	if [ ! `command -v python 2>/dev/null` ] ; then
+		echo -e "FAILED!\n\nYou need to install python first. Aborting." 1>&2
 		exit 2
 	fi
+	if [ ! `command -v i2cset 2>/dev/null` ] ; then
+		echo -e "FAILED!\n\nYou need to install i2c-tools first. Aborting." 1>&2
+		exit 2
+	fi
+	if [ ! -d /usr/lib/systemd/system/ ] ; then
+		echo -e "FAILED!\n\nThis system doesn't seem to have systemd. Aborting." 1>&2
+		exit 2
+	fi
+	echo -e "OK!\n"
+}
+
+install() {
 	read -p "Are you sure you want to install picoolfan-manager [y|N]? " -n 1 -r
 	echo
 	if [[ $REPLY =~ ^[Yy]$ ]] ; then
@@ -101,6 +114,7 @@ uninstall() {
 case "$1" in
 	install)
 		is_root
+		check_prerequisites
 		install
 		;;
 	uninstall)
