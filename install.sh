@@ -35,11 +35,137 @@ check_prerequisites() {
 		echo -e "FAILED!\n\nYou need to install i2c-tools first. Aborting." 1>&2
 		exit 2
 	fi
-	if [ ! -d /usr/lib/systemd/system/ ] ; then
-		echo -e "FAILED!\n\nThis system doesn't seem to have systemd. Aborting." 1>&2
+	echo -e "OK!\n"
+}
+
+check_distribution() {
+	ret=""
+	if [ -d /etc/init.d/ -a -e /etc/debian_version ] ; then
+		ret="debian"
+	elif [ -d /usr/lib/systemd/system/ -a -e /etc/arch-release ] ; then
+		ret="arch"
+	fi
+	echo $ret
+}
+
+copy_common() {
+	cp ./src/picoolfand.py /opt/picoolfan-manager/
+	cp ./src/piconfig.py /opt/picoolfan-manager/
+	cp ./src/picoolfan-manager.py /opt/picoolfan-manager/
+	cp ./src/picoolfan-init.sh /opt/picoolfan-manager/
+}
+
+copy_debian() {
+	copy_common
+	cp ./src/debian/pilog.py.debian /opt/picoolfan-manager/pilog.py
+	cp ./src/debian/picoolfand.sh /etc/init.d/
+	chmod +x /etc/init.d/picoolfand.sh
+}
+
+copy_arch() {
+	copy_common
+	cp ./src/arch/pilog.py.arch /opt/picoolfan-manager/pilog.py
+	cp ./src/arch/picoolfand.service /usr/lib/systemd/system/
+	cp ./src/arch/picoolfan-init.service /usr/lib/systemd/system/
+}
+
+copy_files() {
+	dist=$(check_distribution)
+	if [ $dist == "debian" ] ; then
+		copy_debian
+	elif [ $dist == "arch" ] ; then
+		copy_arch
+	else
+		echo "Error: cannot determine distribution version." 1>&2
 		exit 2
 	fi
-	echo -e "OK!\n"
+}
+
+rm_common() {
+	rm -f /usr/bin/picoolfan
+	rm -f /opt/picoolfan-manager/picoolfand.py*
+	rm -f /opt/picoolfan-manager/pilog.py*
+	rm -f /opt/picoolfan-manager/piconfig.py*
+	rm -f /opt/picoolfan-manager/picoolfan-manager.py*
+	rm -f /opt/picoolfan-manager/picoolfan-init.sh
+	rm -rf /opt/picoolfan-manager/__pycache__/
+	rmdir /opt/picoolfan-manager/ 2> /dev/null
+	rm -f /etc/default/picoolfan-manager
+}
+
+rm_debian() {
+	rm_common
+	rm /etc/init.d/picoolfand.sh
+}
+
+rm_arch() {
+	rm_common
+	rm -f /usr/lib/systemd/system/picoolfand.service
+	rm -f /usr/lib/systemd/system/picoolfan-init.service
+}
+
+rm_files() {
+	dist=$(check_distribution)
+	if [ $dist == "debian" ] ; then
+		rm_debian
+	elif [ $dist == "arch" ] ; then
+		rm_arch
+	else
+		echo "Error: cannot determine distribution version." 1>&2
+		exit 2
+	fi
+}
+
+stop_services_debian() {
+	service picoolfand.sh stop
+	update-rc.d -f picoolfand.sh remove
+}
+
+stop_services_arch() {
+	systemctl stop picoolfand.service
+	systemctl stop picoolfan-init.service
+	systemctl disable picoolfand.service
+	systemctl disable picoolfan-init.service
+}
+
+stop_services() {
+	dist=$(check_distribution)
+	if [ $dist == "debian" ] ; then
+		stop_services_debian
+	elif [ $dist == "arch" ] ; then
+		stop_services_arch
+	else
+		echo "Error: cannot determine distribution version." 1>&2
+		exit 2
+	fi
+}
+
+start_services_debian() {
+	echo "----------------------------------------------------------"
+	echo " start daemon with   'service picoolfand.sh start'        "
+	echo " enable at boot with 'update-rc.d picoolfand.sh defaults' "
+	echo "----------------------------------------------------------"
+}
+
+start_services_arch() {
+	systemctl daemon-reload
+	
+	echo "----------------------------------------------------------"
+	echo " start daemon with   'systemctl start picoolfand.service' "
+	echo " enable at boot with 'systemctl enable picoolfand.service'"
+	echo "----------------------------------------------------------"
+}
+
+start_services() {
+	dist=$(check_distribution)
+	if [ $dist == "debian" ] ; then
+		start_services_debian
+	elif [ $dist == "arch" ] ; then
+		start_services_arch
+	else
+		echo "Error: cannot determine distribution version." 1>&2
+		exit 2
+	fi
 }
 
 install() {
@@ -50,10 +176,7 @@ install() {
 			read -p "Do you want to overwrite current version [y|N]? " -n 1 -r
 			echo
 			if [[ $REPLY =~ ^[Yy]$ ]] ; then
-				systemctl stop picoolfand.service
-				systemctl stop picoolfan-init.service
-				systemctl disable picoolfand.service
-				systemctl disable picoolfan-init.service
+				stop_services
 				rm -f /usr/bin/picoolfan
 			else
 				echo "Installation interrupted by user."
@@ -61,23 +184,17 @@ install() {
 			fi
 		fi
 		mkdir -p /opt/picoolfan-manager
-		cp ./src/picoolfand.py /opt/picoolfan-manager/
-		cp ./src/pilog.py /opt/picoolfan-manager/
-		cp ./src/piconfig.py /opt/picoolfan-manager/
-		cp ./src/picoolfan-manager.py /opt/picoolfan-manager/
-		cp ./src/picoolfan-init.sh /opt/picoolfan-manager/
-		cp ./src/picoolfand.service /usr/lib/systemd/system/
-		cp ./src/picoolfan-init.service /usr/lib/systemd/system/
+		
+		copy_files
+		
 		chmod +x /opt/picoolfan-manager/picoolfand.py
 		chmod +x /opt/picoolfan-manager/picoolfan-manager.py
 		chmod +x /opt/picoolfan-manager/picoolfan-init.sh
 		ln -s /opt/picoolfan-manager/picoolfan-manager.py /usr/bin/picoolfan
-		systemctl daemon-reload
-		echo "----------------------------------------------------------"
-		echo " start daemon with   'systemctl start picoolfand.service' "
-		echo " enable at boot with 'systemctl enable picoolfand.service'"
-		echo "----------------------------------------------------------"
+		
+		start_services
 		echo "Done."
+		
 		exit 0
 	else
 		echo "Installation interrupted by user."
@@ -94,22 +211,14 @@ uninstall() {
 	read -p "Are you sure you want to uninstall picoolfan-manager [y|N]? " -n 1 -r
 	echo
 	if [[ $REPLY =~ ^[Yy]$ ]] ; then
-		systemctl stop picoolfand.service
-		systemctl stop picoolfan-init.service
-		systemctl disable picoolfand.service
-		systemctl disable picoolfan-init.service
+		stop_services
+
 		rm -f /usr/bin/picoolfan
-		rm -f /opt/picoolfan-manager/picoolfand.py*
-		rm -f /opt/picoolfan-manager/pilog.py*
-		rm -f /opt/picoolfan-manager/piconfig.py*
-		rm -f /opt/picoolfan-manager/picoolfan-manager.py*
-		rm -f /opt/picoolfan-manager/picoolfan-init.sh
-		rm -rf /opt/picoolfan-manager/__pycache__/
-		rmdir /opt/picoolfan-manager/ 2> /dev/null
-		rm -f /usr/lib/systemd/system/picoolfand.service
-		rm -f /usr/lib/systemd/system/picoolfan-init.service
-		rm -f /etc/default/picoolfan-manager
+		
+		rm_files
+		
 		echo "Done."
+		
 		exit 0
 	else
 		echo "Uninstallation interrupted by user."
@@ -121,10 +230,14 @@ case "$1" in
 	install)
 		is_root
 		check_prerequisites
+		echo -n "Distribution detected: "
+		echo $(check_distribution)
 		install
 		;;
 	uninstall)
 		is_root
+		echo -n "Distribution detected: "
+		echo $(check_distribution)
 		uninstall
 		;;
 	*)

@@ -1,4 +1,5 @@
 #!/usr/bin/python
+# -*- coding: utf-8 -*-
 
 ##########################################################################
 # PiCoolFan Manager by MrModd
@@ -18,7 +19,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ##########################################################################
 
-from systemd import journal
+import syslog
 
 def log(message):
-	journal.send(message)
+	syslog.syslog(message)

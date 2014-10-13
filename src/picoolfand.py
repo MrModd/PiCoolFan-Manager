@@ -1,4 +1,5 @@
 #!/usr/bin/python
+# -*- coding: utf-8 -*-
 
 ##########################################################################
 # PiCoolFan Manager by MrModd
@@ -124,6 +125,7 @@ for opt, arg in opts:
 	elif opt in ('-c', '--config'):
 		CONFIGPATH = arg
 
+# Read config from file
 try:
 	conf = piconfig.getConfig(CONFIGPATH)
 except Exception as e:
@@ -168,7 +170,7 @@ while 1:
 						sys.exit(1)
 					oldTemp = newTemp
 					currentSpeed = i
-					printMessage('Temperature %3.2f°C, new speed %s.' % (newTemp, conf['speedLabels'][i]), daemon)
+					printMessage('Temperature %3.2f Celsius, new speed %s.' % (newTemp, conf['speedLabels'][i]), daemon)
 
 				break
 			elif i == 4:
@@ -180,5 +182,5 @@ while 1:
 						sys.exit(1)
 					oldTemp = newTemp
 					currentSpeed = i
-					printMessage('Temperature %3.2f°C, new speed %s.' % (newTemp, conf['speedLabels'][i]), daemon)
+					printMessage('Temperature %3.2f Celsius, new speed %s.' % (newTemp, conf['speedLabels'][i]), daemon)
 			i = i+1
