@@ -35,48 +35,59 @@ is_root() {
 	fi
 }
 
-case "$1" in
-  start)
-	is_root
-
-	if [ ! $(lsmod | grep i2c_bcm2708) ] ; then
+start_daemon() {
+	if [ ! "$(lsmod | grep i2c_bcm2708)" ] ; then
 		/opt/picoolfan-manager/picoolfan-init.sh
 	fi
 	/opt/picoolfan-manager/picoolfand.py -d
+}
+
+stop_daemon() {
+	process=$(ps aux | grep picoolfand.py | grep -v grep | awk "{print \$2}")
+	echo "Killing PID $process"
+	kill -15 $process
+}
+
+case "$1" in
+  start)
+	is_root
+	
+	process=$(ps aux | grep picoolfand.py | grep -v grep | awk "{print \$2}")
+	if [ "$process" ] ; then
+		echo "Already running with PID $process" >&2
+		exit 1
+	fi
+	
+	start_daemon
+
 	process=$(ps aux | grep picoolfand.py | grep -v grep | awk "{print \$2}")
 	echo "Process started with PID $process"
 	;;
   stop)
 	is_root
-
+	
 	process=$(ps aux | grep picoolfand.py | grep -v grep | awk "{print \$2}")
-	if [ ! $process ] ; then
+	if [ ! "$process" ] ; then
 		echo "Not running" >&2
 		exit 1
 	fi
-	echo "Killing PID $process"
-	kill -15 $process
+
+	stop_daemon
+
 	echo "Done."
 	;;
   restart|force-reload)
 	is_root
 
 	process=$(ps aux | grep picoolfand.py | grep -v grep | awk "{print \$2}")
-	if [ ! $process ] ; then
-		echo "Not running" >&2
-		exit 1
+	if [ "$process" ] ; then
+		stop_daemon
 	fi
-	echo "Killing PID $process"
-	kill -15 $process
+	
+	start_daemon
 
-	if [ ! $(lsmod | grep i2c_bcm2708) ] ; then
-		/opt/picoolfan-manager/picoolfan-init.sh
-	fi
-	/opt/picoolfan-manager/picoolfand.py -d
 	process=$(ps aux | grep picoolfand.py | grep -v grep | awk "{print \$2}")
 	echo "Process started with PID $process"
-
-	echo "Done."
 	;;
   *)
 	echo "Usage: $0 {start|stop|restart|force-reload}" >&2
