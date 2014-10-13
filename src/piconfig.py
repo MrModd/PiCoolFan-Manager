@@ -87,7 +87,7 @@ def getConfig(configPath):
 	except ConfigParser.NoOptionError:
 		configHash['delay'] = delay
 		#Config['Global']['delay'] = delay
-		Config.set('Global', 'delay', delay)
+		Config.set('Global', 'delay', str(delay))
 		dirty = True
 	except ValueError:
 		raise ConfigException('Invalid value for "delay" option')
@@ -164,7 +164,7 @@ def getConfig(configPath):
 	except ConfigParser.NoOptionError:
 		configHash['margin'] = margin
 		#Config['Advanced']['margin'] = margin
-		Config.set('Advanced', 'margin', margin)
+		Config.set('Advanced', 'margin', str(margin))
 		dirty = True
 	except ValueError:
 		raise ConfigException('Invalid value for "margin" option')

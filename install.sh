@@ -43,7 +43,7 @@ check_distribution() {
 	if [ -d /etc/init.d/ -a -e /etc/debian_version ] ; then
 		ret="debian"
 	elif [ -d /usr/lib/systemd/system/ -a -e /etc/arch-release ] ; then
-		ret="arch"
+		ret="archlinux"
 	fi
 	echo $ret
 }
@@ -73,7 +73,7 @@ copy_files() {
 	dist=$(check_distribution)
 	if [ $dist == "debian" ] ; then
 		copy_debian
-	elif [ $dist == "arch" ] ; then
+	elif [ $dist == "archlinux" ] ; then
 		copy_arch
 	else
 		echo "Error: cannot determine distribution version." 1>&2
@@ -108,7 +108,7 @@ rm_files() {
 	dist=$(check_distribution)
 	if [ $dist == "debian" ] ; then
 		rm_debian
-	elif [ $dist == "arch" ] ; then
+	elif [ $dist == "archlinux" ] ; then
 		rm_arch
 	else
 		echo "Error: cannot determine distribution version." 1>&2
@@ -132,7 +132,7 @@ stop_services() {
 	dist=$(check_distribution)
 	if [ $dist == "debian" ] ; then
 		stop_services_debian
-	elif [ $dist == "arch" ] ; then
+	elif [ $dist == "archlinux" ] ; then
 		stop_services_arch
 	else
 		echo "Error: cannot determine distribution version." 1>&2
@@ -160,7 +160,7 @@ start_services() {
 	dist=$(check_distribution)
 	if [ $dist == "debian" ] ; then
 		start_services_debian
-	elif [ $dist == "arch" ] ; then
+	elif [ $dist == "archlinux" ] ; then
 		start_services_arch
 	else
 		echo "Error: cannot determine distribution version." 1>&2
