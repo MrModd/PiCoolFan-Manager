@@ -46,6 +46,12 @@ them with:
 
 		~# pacman -S python
 
+- From Systemd version 223 an external package named **python-systemd** is
+required in order to log into the system journal. On ArchLinux install it
+with:
+
+		~# pacman -S python-systemd
+
 ## How to install
 
 Clone this git repository and execute install.sh script with root permissions:
